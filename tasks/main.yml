@@ -1,0 +1,44 @@
+---
+
+- name: create elasticsearch_exporter group
+  group:
+    name: "{{ elasticsearch_exporter_group }}"
+    state: present
+
+- name: create elasticsearch_exporter user
+  user:
+    name: "{{ elasticsearch_exporter_user }}"
+    comment: "User to run elasticsearch_exporter"
+    createhome: no
+    shell: /bin/false
+    group: "{{ elasticsearch_exporter_group }}"
+    state: present
+
+- name: create elasticsearch_exporter home directory
+  file:
+    state: directory
+    path:  "{{ elasticsearch_exporter_parent_dir }}"
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+
+- name: download and untar elasticsearch_exporter tarball
+  unarchive:
+    src: "{{ elasticsearch_exporter_tarball_url }}"
+    dest: "{{ elasticsearch_exporter_parent_dir }}"
+    remote_src: yes
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+    creates: "{{ elasticsearch_exporter_install_path }}"
+
+- name: install service file
+  template:
+    src: elasticsearch_exporter.service.j2
+    dest: /etc/systemd/system/elasticsearch_exporter.service
+  notify:
+    - restart elasticsearch_exporter service
+
+- name: start elasticsearch_exporter service
+  systemd:
+    name: elasticsearch_exporter
+    state: started
+    enabled: yes

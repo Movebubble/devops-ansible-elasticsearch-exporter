@@ -1,0 +1,13 @@
+[Unit]
+Description=ElasticSearch Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ elasticsearch_exporter_user }}
+Group={{ elasticsearch_exporter_group }}
+Type=simple
+ExecStart={{ elasticsearch_exporter_install_path }}/elasticsearch_exporter --es.uri={{ elasticsearch_exporter_uri }} --es.indices=true
+
+[Install]
+WantedBy=multi-user.target
