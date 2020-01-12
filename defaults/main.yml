@@ -8,3 +8,4 @@ elasticsearch_exporter_user: elasticsearch_exporter
 elasticsearch_exporter_group: elasticsearch_exporter
 
 elasticsearch_exporter_uri: http://localhost:9200
+elasticsearch_exporter_args: "--es.indices"
